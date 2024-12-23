@@ -1,8 +1,9 @@
 import re
 import csv
 from types import NoneType
-
 from bs4 import BeautifulSoup
+from lxml import html
+from scrapy import Selector
 from tabulate import tabulate
 
 
@@ -10,8 +11,6 @@ def save_error(url, error, field, err_file_path):
     with open(err_file_path, "a") as error_csvfile:
         writer = csv.writer(error_csvfile)
         writer.writerow([url, field, type(error), error])
-
-
 
 
 def del_classes_AND_divs_from_html(html: str) -> str:
@@ -91,3 +90,12 @@ def get_value_from_json_by_value(obj, key):
             item = get_value_from_json_by_value(v, key)
             if item is not None:
                 return item
+
+
+def del_attrs_from_scrapy_selector(selector: Selector) -> str:
+    tree = html.fromstring(selector.get())
+    for element in tree.iter():
+        for attribute in list(element.attrib):
+            del element.attrib[attribute]
+    cleaned_str = html.tostring(tree, pretty_print=True).decode()
+    return cleaned_str
