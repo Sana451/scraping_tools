@@ -93,7 +93,11 @@ def get_value_from_json_by_value(obj, key):
 
 
 def del_attrs_from_scrapy_selector(selector: Selector) -> str:
-    tree = html.fromstring(selector.get())
+    selector_content = selector.get()
+    if selector_content is None:
+        return ""
+
+    tree = html.fromstring(selector_content)
     for element in tree.iter():
         for attribute in list(element.attrib):
             del element.attrib[attribute]
