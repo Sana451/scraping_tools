@@ -8,6 +8,8 @@ class ResultFields:
     title: str = "Заголовок"
     article: str = "Артикул"
     availability: str = "Доступность"
+    delivery: str = "Доставка"
+    shipment: str = "Поставка"
     ean: str = "ean"
     mpn: str = "mpn"
     gtin: str = "gtin"
@@ -24,3 +26,4 @@ class ResultFields:
     short_description: str = "Краткое описание"
     description: str = "Описание"
     details: str = "Характеристики"
+    parsing_date: str = "Дата парсинга"
