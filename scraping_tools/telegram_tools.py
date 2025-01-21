@@ -1,8 +1,11 @@
+import os
+
 import requests
 import logging
 
 logger = logging.getLogger(__name__)
 
+TELEGRAM_DOMAIN = os.getenv("TELEGRAM_DOMAIN", "https://api.telegram.org")
 BOT_TOKEN = "7680351688:AAGC7eRCpQNkRkoCVy-4yjQeuG1BDwkSjoE"
 CHAT_ID = "1748157760"
 
@@ -12,7 +15,7 @@ def send_file_result(file_name, bot_token=BOT_TOKEN, chat_id=CHAT_ID, caption="Ð
     try:
         with open(file_name, 'rb') as file:
             response = requests.post(
-                url=f"https://api.telegram.org/bot{bot_token}/sendDocument",
+                url=f"{TELEGRAM_DOMAIN}/bot{bot_token}/sendDocument",
                 data={
                     "chat_id": chat_id,
                     "caption": caption,
@@ -30,7 +33,7 @@ def send_file_result(file_name, bot_token=BOT_TOKEN, chat_id=CHAT_ID, caption="Ð
 
 def send_telegram_log(message="Not message to send but I wanted it too much.", bot_token=BOT_TOKEN, chat_id=CHAT_ID):
     requests.post(
-        url=f"https://api.telegram.org/bot{bot_token}/sendMessage",
+        url=f"{TELEGRAM_DOMAIN}/bot{bot_token}/sendMessage",
         data={
             "chat_id": chat_id,
             "text": message
