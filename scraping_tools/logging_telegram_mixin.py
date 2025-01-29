@@ -10,6 +10,7 @@ class LoggingTelegramMixin:
     MSG_SPIDER_CLOSED = "Closed {name} \n {reason}"
     MSG_FEED_EXPORTER_CLOSED = "Feed_exporter_closed \n {name}"
     MSG_PROGRESS_UPDATE = "{name} \n обработал {current}/{total} страниц"
+    MSG_TIMEOUT_UPDATE = "{name} \n обработал {total_processed} страниц"
 
     def get_safe(self, attr_name, default=None):
         return getattr(self, attr_name, default)
@@ -110,8 +111,9 @@ class LoggingTelegramMixin:
         if send_interval:
             # Проверка, прошло ли достаточно времени с последней отправки
             current_time = time.time()
+            total_processed = self.crawler.stats.get_value('scheduler/dequeued')
             if current_time - last_sent_time >= send_interval:
-                message = self.MSG_PROGRESS_UPDATE.format(name=name)
+                message = self.MSG_TIMEOUT_UPDATE.format(name=name, total_processed=total_processed)
                 print(message)
 
                 if self.get_safe("production"):
