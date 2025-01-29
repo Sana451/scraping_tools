@@ -1,3 +1,5 @@
+import time
+
 from scraping_tools.telegram_tools import send_telegram_log, send_file_result
 
 
@@ -97,3 +99,30 @@ class LoggingTelegramMixin:
                     file_name=log_file,
                     caption=f"Логи \n {name}"
                 )
+
+    def send_updates_with_timeout(self):
+        name = self.get_safe('name')
+        results_file_path = self.get_safe("results_file_path")
+        log_file = self.get_safe("log_file")
+        last_sent_time = self.get_safe("last_sent_time")
+        send_interval = self.get_safe("send_interval")
+
+        if send_interval:
+            # Проверка, прошло ли достаточно времени с последней отправки
+            current_time = time.time()
+            if current_time - last_sent_time >= send_interval:
+                message = self.MSG_PROGRESS_UPDATE.format(name=name)
+                print(message)
+
+                if self.get_safe("production"):
+                    send_telegram_log(message)
+                    send_file_result(
+                        file_name=results_file_path,
+                        caption=f"Промежуточные результаты \n {name}"
+                    )
+                    send_file_result(
+                        file_name=log_file,
+                        caption=f"Логи \n {name}"
+                    )
+
+                self.last_sent_time = current_time
