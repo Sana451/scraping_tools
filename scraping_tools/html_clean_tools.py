@@ -92,10 +92,23 @@ def get_value_from_json_by_value(obj, key):
                 return item
 
 
+def remove_html_comments(html_str: str) -> str:
+    """Удаляет все HTML-комментарии из строки с базовой защитой от ошибок."""
+    if not isinstance(html_str, str):
+        return ""
+    try:
+        return re.sub(r"<!--.*?-->", "", html_str, flags=re.DOTALL)
+    except re.error as e:
+        print(f"[Ошибка регулярки]: {e}")
+        return html_str
+
+
 def del_attrs_from_scrapy_selector(selector: Selector) -> str:
     selector_content = selector.get()
     if selector_content is None:
         return ""
+
+    selector_content = remove_html_comments(selector_content)  # удаляем комментарии
 
     tree = html.fromstring(selector_content)
     for element in tree.iter():
