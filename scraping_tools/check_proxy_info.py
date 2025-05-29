@@ -4,8 +4,8 @@ url = "http://ip-api.com/json"
 resp = requests.get(
     url,
     proxies={
-        'http': 'http://vk0dUcb:Us5jxS8o88@23.27.3.254:59100',
-        'https': 'http://vk0dUcb:Us5jxS8o88@23.27.3.254:59100',
+        'http': 'http://3kYPYt:NQ1HG8@191.102.148.218:9033',
+        'https': 'http://3kYPYt:NQ1HG8@191.102.148.218:9033',
     }
 )
 
@@ -21,3 +21,5 @@ if resp.status_code == 200:
     print(f"Почтовый индекс: {geo_data.get('zip', '')}")
     print(f"Часовой пояс: {geo_data.get('timezone', '')}")
     print("-" * 30)
+else:
+    print(resp.status_code)

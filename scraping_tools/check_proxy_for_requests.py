@@ -54,7 +54,7 @@ headers = {
 url = "https://mall.industry.siemens.com/mall/en/DE/Catalog/Product/?mlfb=5SP3263-3&SiepCountryCode=DE&quantity=1"
 
 
-with open("/proxy.txt", "r", encoding="utf-8") as f:
+with open("/home/sana451/PycharmProjects/scrapy_parsers/proxy.txt", "r", encoding="utf-8") as f:
     proxy_list = f.readlines()
 
 
