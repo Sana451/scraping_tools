@@ -1,9 +1,11 @@
-import re
 import csv
-from types import NoneType
-from bs4 import BeautifulSoup
+import re
 from lxml import html
-from scrapy import Selector
+from types import NoneType
+from typing import Union
+
+from bs4 import BeautifulSoup
+from scrapy.selector import Selector, SelectorList
 from tabulate import tabulate
 
 
@@ -103,7 +105,7 @@ def remove_html_comments(html_str: str) -> str:
         return html_str
 
 
-def del_attrs_from_scrapy_selector(selector: Selector) -> str:
+def del_attrs_from_scrapy_selector(selector: Union[Selector, SelectorList]) -> str:
     selector_content = selector.get()
     if selector_content is None:
         return ""
