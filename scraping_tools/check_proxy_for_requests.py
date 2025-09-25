@@ -27,7 +27,7 @@ def parse_proxy(line: str) -> dict:
         proxy_ip = ip
         proxy_url = f"http://{user}:{pwd}@{ip}:{port}"
 
-    # Формат 3: ip:port (без авторизации)
+    # Формат 3: ip:port
     elif re.match(r"^\d+\.\d+\.\d+\.\d+:\d+$", line):
         ip, port = line.split(":")
         proxy_ip = ip
@@ -41,6 +41,17 @@ def parse_proxy(line: str) -> dict:
         "proxy_url": proxy_url
     }
 
+def get_country(ip: str) -> str:
+    try:
+        geo_url = f"http://ip-api.com/json/{ip}?fields=status,country"
+        r = requests.get(geo_url, timeout=5)
+        data = r.json()
+        if data.get("status") == "success":
+            return data.get("country", "Unknown")
+    except Exception:
+        pass
+    return "Unknown"
+
 def check_proxy(proxy_raw: str):
     try:
         parsed = parse_proxy(proxy_raw)
@@ -53,14 +64,16 @@ def check_proxy(proxy_raw: str):
         }
 
         response = requests.get(test_url, proxies=proxies, timeout=15)
-        response_ip = response.json().get("origin", "")
+        response_ip = response.json().get("origin", "").split(",")[0].strip()
+
+        country = get_country(response_ip)
 
         if proxy_ip in response_ip:
             OK.append(proxy_raw)
-            print(f"✅ Proxy OK: {proxy_ip} == {response_ip}")
+            print(f"✅ Proxy OK: {proxy_ip} ({country})")
         else:
             MISMATCH.append(proxy_raw)
-            print(f"⚠️  Proxy mismatch: {proxy_ip} != {response_ip}")
+            print(f"⚠️  Proxy mismatch: {proxy_ip} != {response_ip} ({country})")
 
     except Exception as e:
         DEAD.append(proxy_raw)
@@ -68,6 +81,7 @@ def check_proxy(proxy_raw: str):
 
 def main():
     with open("/home/sana451/PycharmProjects/scrapy_parsers/proxy.txt", "r", encoding="utf-8") as f:
+    # with open("/home/sana451/PycharmProjects/aleksandr_parsers/share_proxies.txt", "r", encoding="utf-8") as f:
         proxy_list = [line.strip() for line in f if line.strip()]
 
     print(f"🔍 Проверка {len(proxy_list)} прокси...")
@@ -83,7 +97,6 @@ def main():
     print(f"⚠️  Несовпадение IP: {len(MISMATCH)}")
     print(f"❌ Нерабочих: {len(DEAD)}")
 
-    # Если нужно, можно сохранить в файлы:
     with open("ok.txt", "w") as f:
         f.writelines(p + "\n" for p in OK)
 
