@@ -113,8 +113,8 @@ class DigitalOceanSpaceClient:
 # --- Пример использования ---
 if __name__ == "__main__":
     client = DigitalOceanSpaceClient(
-        secret_key=os.getenv("DIGITAL_OCEAN_SECRET_KEY", "1vZhvgK0f2Q2HfKRRN7qnQT5XbdpjZ4KIgo54QRifXQ"),
-        access_key=os.getenv("DIGITAL_OCEAN_ACCESS_KEY", "DO801ZEM3KU6BQ72WFPG"),
+        secret_key=os.getenv("DIGITAL_OCEAN_SECRET_KEY", ""),
+        access_key=os.getenv("DIGITAL_OCEAN_ACCESS_KEY", ""),
     )
 
     image_url = "https://relays-store-uk.s5.cdn-upgates.com/_cache/f/6/f6cbf0bd0825215e678b030bfc264faa-z5e5ceb8fddc7f.png"
