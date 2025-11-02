@@ -8,8 +8,8 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
 TELEGRAM_DOMAIN = os.getenv("TELEGRAM_DOMAIN", "https://api.telegram.org")
-BOT_TOKEN = "7680351688:AAGC7eRCpQNkRkoCVy-4yjQeuG1BDwkSjoE"
-CHAT_ID = (1748157760, 7606152113)
+BOT_TOKEN = "YOUR_BOT_TOKEN"
+CHAT_ID = (123456789, 1234567890)
 
 # Общий таймаут для всех запросов
 REQUEST_TIMEOUT = 5  # секунд
