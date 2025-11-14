@@ -185,9 +185,16 @@ class TelegramClient:
 
 
 if __name__ == '__main__':
+    from dotenv import load_dotenv
+    load_dotenv()
+
+    TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
+    TELEGRAM_CHAT_IDS = os.getenv("TELEGRAM_CHAT_IDS", "")
+    TELEGRAM_CHAT_IDS = [x.strip() for x in TELEGRAM_CHAT_IDS.split(",")]
+
     client = TelegramClient(
-        bot_token="YOUR BOT TOKEN HERE",
-        chat_ids=[123456789, 123456780]
+        bot_token=TELEGRAM_BOT_TOKEN,
+        chat_ids=TELEGRAM_CHAT_IDS
     )
 
     client.send_message("Тестовое сообщение от нового клиента")
@@ -196,5 +203,5 @@ if __name__ == '__main__':
 
     client.send_message(
         "Сообщение только для одного чата",
-        chat_ids=123456789
+        chat_ids=TELEGRAM_CHAT_IDS[0]
     )

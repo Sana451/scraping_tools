@@ -1,3 +1,4 @@
+import os
 import time
 from typing import Optional, Set, List, Any
 
@@ -148,3 +149,71 @@ class LoggingTelegramMixin:
             )
 
             self.last_sent_time = current_time
+
+
+
+if __name__ == "__main__":
+    from scraping_tools.telegram_client import TelegramClient
+    from dotenv import load_dotenv
+    load_dotenv()
+
+    TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
+    TELEGRAM_CHAT_IDS = os.getenv("TELEGRAM_CHAT_IDS", "")
+    TELEGRAM_CHAT_IDS = [x.strip() for x in TELEGRAM_CHAT_IDS.split(",")]
+
+    class DummyLogger:
+        def info(self, msg): print("[INFO]", msg)
+        def warning(self, msg): print("[WARNING]", msg)
+        def debug(self, msg): print("[DEBUG]", msg)
+
+    class DummyCrawlerStats:
+        def __init__(self, value=0):
+            self.value = value
+
+        def get_value(self, key, default=None):
+            return self.value
+
+    class DummyCrawler:
+        def __init__(self):
+            self.stats = DummyCrawlerStats(value=42)
+
+    class TestSpider(LoggingTelegramMixin):
+        def __init__(self):
+            self.name = "TestSpider"
+            self.production = True   # ВАЖНО: иначе сообщения не пойдут
+            self.results_file_path = "results.json"
+            self.log_file = "spider.log"
+            self.start_url = "https://example.com"
+            self.progress_checkpoints = [1, 5, 10]
+            self.sent_progress_checkpoints = set()
+            self.last_sent_time = time.time() - 999
+            self.send_interval = 10
+            self.crawler = DummyCrawler()
+            self.logger = DummyLogger()
+
+            self.telegram_client = TelegramClient(
+                bot_token=TELEGRAM_BOT_TOKEN,
+                chat_ids=TELEGRAM_CHAT_IDS
+            )
+
+    # ИНИЦИАЛИЗАЦИЯ
+    spider = TestSpider()
+
+    print("\n=== TEST: engine_started ===")
+    spider.engine_started()
+
+    print("\n=== TEST: track_progress_for_telegram ===")
+    spider.track_progress_for_telegram(1, 100)
+    time.sleep(1)
+    spider.track_progress_for_telegram(5, 100)
+    time.sleep(1)
+    spider.track_progress_for_telegram(10, 100)
+
+    print("\n=== TEST: send_updates_with_timeout ===")
+    spider.send_updates_with_timeout()
+
+    print("\n=== TEST: spider_closed ===")
+    spider.spider_closed(spider, reason="finished")
+
+    print("\n=== TEST: engine_stopped ===")
+    spider.engine_stopped()
