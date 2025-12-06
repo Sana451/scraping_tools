@@ -21,6 +21,7 @@ class ResultFields:
     type: str = "Тип"
     id: str = "ID"
     manufacturer: str = "Производитель"
+    manufacturer_country: str = "Страна производства"
     brand: str = "Бренд"
     categories: str = "Категории"
     price: str = "Цена"
