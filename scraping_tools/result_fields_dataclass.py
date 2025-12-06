@@ -29,6 +29,7 @@ class ResultFields:
     price_per: str = "Цена за"
     price_info: str = "Цена (дополнительно)"
     price_unit: str = "Цена (unit)"
+    discount: str = "Скидка"
     stock: str = "Наличие"
     stock_info: str = "Наличие (дополнительно)"
     quantity: str = "Количество"
