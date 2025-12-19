@@ -21,16 +21,18 @@ class DigitalOceanSpaceClient:
         self.region_name = region_name
         self.base_folder = base_folder.strip("/") if base_folder else ""
 
-        # ✅ endpoint должен быть без имени бакета!
         self.s3_client = boto3.client(
             "s3",
             endpoint_url=f"https://{region_name}.digitaloceanspaces.com",
             region_name=region_name,
             aws_access_key_id=access_key,
             aws_secret_access_key=secret_key,
+            config=boto3.session.Config(
+                connect_timeout=5,
+                read_timeout=5,
+                retries={"max_attempts": 3},
+            ),
         )
-
-    # --- Вспомогательные методы ---
 
     def _is_url(self, path: str) -> bool:
         """Проверяет, является ли строка URL."""
@@ -71,7 +73,6 @@ class DigitalOceanSpaceClient:
             raise RuntimeError(f"Файл не найден: {file_path}")
 
     # --- Основная логика загрузки ---
-
     def upload_image(self, source_path: str, s3_key: str) -> str:
         """
         Загружает изображение (по URL или локальному пути) в Space.
@@ -95,14 +96,14 @@ class DigitalOceanSpaceClient:
                 Key=key_path,
                 Body=image_bytes,
                 ContentType=content_type,
-                ACL="public-read",  # ✅ обязательно, иначе файл не откроется по URL
+                ACL="public-read",  # обязательно, иначе файл не откроется по URL
             )
 
             public_url = (
                 f"https://{self.space_name}.{self.region_name}.digitaloceanspaces.com/{key_path}"
             )
 
-            print(f"✅ Загружено: {public_url}")
+            print(f"Загружено: {public_url}")
             return public_url
 
         except ClientError as e:
@@ -110,14 +111,17 @@ class DigitalOceanSpaceClient:
             raise RuntimeError(f"Ошибка при загрузке {s3_key} в Space: {error_msg}")
 
 
-# --- Пример использования ---
 if __name__ == "__main__":
+    from dotenv import load_dotenv
+    load_dotenv(dotenv_path="/home/sana451/PycharmProjects/scrapy_parsers/.env")
+
+    print(os.getenv("DIGITAL_OCEAN_SECRET_KEY"))
+
     client = DigitalOceanSpaceClient(
         secret_key=os.getenv("DIGITAL_OCEAN_SECRET_KEY", ""),
-        access_key=os.getenv("DIGITAL_OCEAN_ACCESS_KEY", ""),
     )
 
-    image_url = "https://relays-store-uk.s5.cdn-upgates.com/_cache/f/6/f6cbf0bd0825215e678b030bfc264faa-z5e5ceb8fddc7f.png"
+    image_url = "https://shop.kaeltefischer.de/media/GR8/RESU01/8505160-8505161.jpg"
     public_link = client.upload_image(image_url, s3_key="HRN-44N.png")
 
     print("Публичная ссылка:", public_link)

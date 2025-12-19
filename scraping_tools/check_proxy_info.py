@@ -6,7 +6,8 @@ resp = requests.get(
     proxies={
         'http': 'http://3kYPYt:NQ1HG8@191.102.148.218:9033',
         'https': 'http://3kYPYt:NQ1HG8@191.102.148.218:9033',
-    }
+    },
+    timeout=10
 )
 
 if resp.status_code == 200:
